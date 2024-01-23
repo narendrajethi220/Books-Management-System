@@ -1,0 +1,143 @@
+* {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+}
+.App {
+  height: 100vh;
+  padding: 0px 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0.5rem;
+}
+
+.header-main {
+  background-color: #44403c;
+  color: white;
+  padding: 15px;
+}
+
+.books {
+  display: flex;
+  gap: 10px;
+}
+
+.book {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+img {
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  background-color: cornflowerblue;
+}
+.delete {
+  border: none;
+  padding: 4px 8px;
+  background-color: white;
+  cursor: pointer;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  font-weight: bold;
+}
+.delete:hover {
+  background-color: red;
+  color: white;
+  transition: 0.3s ease-out;
+}
+.ubtn {
+  border: none;
+  padding: 4px 8px;
+  /* background-color: white; */
+  cursor: pointer;
+  background-color: #c77502;
+  border: 1px solid #c77502;
+  margin-bottom: 1rem;
+}
+.ubtn:hover {
+  background-color: white;
+}
+.updatebtn:hover {
+  color: #c77502;
+  transition: 0.3s ease-out;
+}
+.updatebtn {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+.abtn {
+  background-color: #0284c7;
+  padding: 5px;
+}
+
+.addbtn {
+  text-decoration: none;
+  /* background-color: #0284c7; */
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  margin: 20px;
+  font-weight: bold;
+}
+.abtn:hover {
+  background-color: white;
+}
+.addbtn:hover {
+  color: #0284c7;
+  transition: 0.3s ease-out;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+input {
+  width: 250px;
+  padding: 10px;
+  border: 1px solid grey;
+}
+
+.formButton {
+  border: none;
+  padding: 10px;
+  background-color: orange;
+  font-weight: bold;
+}
+/* Tablet Styles */
+@media only screen and (min-width: 601px) and (max-width: 768px) {
+  .App {
+    padding: 0 40px;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media only screen and(max-width:900px) {
+  .books {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .App {
+    height: 100%;
+    border: 2px solid main;
+  }
+  .header-main {
+    width: 100%;
+  }
+  .books {
+    flex-wrap: wrap;
+  }
+}
