@@ -1,39 +1,72 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const Update = () => {
-  const [book, setBook] = useState({
-    title: "",
-    descr: "",
-    cover: " ",
-    price: null,
-  });
+  const { id } = useParams();
+  const [title, setTitle] = useState("");
+  const [descr, setDescr] = useState("");
+  const [price, setPrice] = useState(null);
+  const [cover, setCover] = useState("");
+  const [coverPreview, setCoverPreview] = useState(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const bookId = location.pathname.split("/")[2];
 
-  const handleChange = (e) => {
-    setBook((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-  const handleFileChange = (e) => {
-    setBook((prev) => ({ ...prev, cover: e.target.files[0] }));
-  };
+  useEffect(() => {
+    Axios.get("http://localhost:3002/books/" + id)
+      .then((res) => {
+        // console.log(res.data);
+        setTitle(res.data[0].title);
+        setDescr(res.data[0].descr);
+        setPrice(res.data[0].price);
+        setCoverPreview(`http://localhost:3002/images/${res.data[0].cover}`);
+      })
+      .catch((err) => console.log(err));
+  }, [id]);
+
   const handleClick = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("title", book.title);
-    formData.append("descr", book.descr);
-    formData.append("price", book.price);
-    formData.append("cover", book.cover);
+    formData.append("title", title);
+    formData.append("descr", descr);
+    formData.append("price", price);
+
+    if (cover && cover instanceof File) {
+      formData.append("cover", cover);
+    }
     try {
-      await Axios.put(`http://localhost:3002/books/${bookId}`, formData);
+      const response = await Axios.put(
+        `http://localhost:3002/books/${id}`,
+        formData
+      );
       navigate("/");
-    } catch (err) {
-      console.log(err);
+      if (response.data.updated) {
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.error("Error during update request:", error);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+
+    setCover(selectedFile);
+
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setCoverPreview(reader.result);
+      };
+
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setCoverPreview(null);
     }
   };
   return (
@@ -42,21 +75,33 @@ const Update = () => {
       <input
         type="text"
         placeholder="title"
-        onChange={handleChange}
+        onChange={(e) => setTitle(e.target.value)}
         name="title"
+        value={title || ""}
       />
       <input
         type="text"
         placeholder="description"
-        onChange={handleChange}
+        onChange={(e) => setDescr(e.target.value)}
         name="descr"
+        value={descr || ""}
       />
       <input
         type="number"
         placeholder="price"
-        onChange={handleChange}
+        onChange={(e) => setPrice(e.target.value)}
         name="price"
+        value={price || ""}
       />
+      <div className="img">
+        {coverPreview && (
+          <img
+            src={coverPreview}
+            alt="Cover Preview"
+            style={{ maxWidth: "100%", marginTop: "10px" }}
+          />
+        )}
+      </div>
       <input
         type="file"
         placeholder="uploade cover image"

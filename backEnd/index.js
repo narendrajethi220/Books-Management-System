@@ -3,6 +3,7 @@ const app = express();
 const mysql = require("mysql2");
 const cors = require("cors");
 const multer = require("multer");
+const fs = require("fs");
 
 const db = mysql.createConnection({
   user: "root",
@@ -50,6 +51,15 @@ app.get("/books", (req, res) => {
   });
 });
 
+app.get("/books/:id", (req, res) => {
+  const q = "SELECT * FROM books Where ID=?";
+  const id = req.params.id;
+  db.query(q, [id], (err, result) => {
+    if (err) return res.json({ Error: err });
+    return res.json(result);
+  });
+});
+
 app.post("/books", upload.single("cover"), (req, res) => {
   const q = "INSERT INTO books(title,descr,cover,price) VALUES (?,?,?,?)";
   const values = [
@@ -70,28 +80,45 @@ app.post("/books", upload.single("cover"), (req, res) => {
 });
 
 app.delete("/books/:id", (req, res) => {
-  const bookId = req.params.id;
-  const q = "DELETE FROM books WHERE id=?";
-  db.query(q, bookId, (err, result) => {
-    if (err) return res.send(err);
-    return res.send("Book has been deleted Successfully");
+  const bookId = req.params.id; // Declare bookId here, accessible to both queries
+
+  db.query("SELECT cover FROM books WHERE id=?", [bookId], (er, result) => {
+    if (er) {
+      return res.send(er);
+    }
+    const filename = result[0].cover;
+    const imagePath = `public/images/${filename}`;
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Error deleting image:", err);
+        return res.status(500).send("Error deleting image");
+      }
+      db.query("DELETE FROM books WHERE id=?", bookId, (err, result) => {
+        if (err) {
+          return res.send(err);
+        }
+        return res.send("Book and image have been deleted successfully");
+      });
+    });
   });
 });
 
 app.put("/books/:id", upload.single("cover"), (req, res) => {
   const bookId = req.params.id;
-  console.log(bookId);
-  console.log("Request Body:", req.body);
-  console.log("Request File:", req.file);
-  const q =
-    "UPDATE books SET `title`=?,`descr`=?,`price`=?,`cover`=? WHERE id=?";
-  const values = [
-    req.body.title,
-    req.body.descr,
-    req.body.price,
-    req.file ? req.file.filename : null,
-  ];
-  db.query(q, [...values, bookId], (err, result) => {
+  // console.log(bookId);
+  const { title, descr, price } = req.body;
+  // console.log("Request Body:", req.body);
+  // console.log("Request File:", req.file);
+  var q = "UPDATE books SET `title`=?,`descr`=?,`price`=?";
+  const values = [title, descr, price];
+  if (req.file) {
+    const filename = req.file.filename;
+    values.push(filename);
+    q += ", `cover`=?";
+  }
+  q += "WHERE id=?";
+  values.push(bookId);
+  db.query(q, [...values], (err, result) => {
     if (err) return res.json(err);
     return res.send("Book has been Updated Successfully");
   });
