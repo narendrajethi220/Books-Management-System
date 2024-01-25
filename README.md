@@ -1,6 +1,6 @@
 ![Screenshot (677)](https://github.com/narendrajethi220/Books-Management-System/assets/55850738/de5f919b-c310-42fa-be6a-7dedd5c7051e)
 ![Screenshot (678)](https://github.com/narendrajethi220/Books-Management-System/assets/55850738/a1d5c15d-4ed9-452f-b7a8-cb9b6ed843d5)
-![Screenshot (679)](https://github.com/narendrajethi220/Books-Management-System/assets/55850738/1d96d909-7d9f-4f86-a848-7ef855bf6b1f)
+![image](https://github.com/narendrajethi220/Books-Management-System/assets/55850738/341c1cb1-c76e-415c-a9c5-d6f14d0ff5be)
 
 Books Management System
 Overview
